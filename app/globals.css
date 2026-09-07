@@ -2,51 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  body {
-    @apply bg-white text-gray-900;
-  }
-
-  h1 {
-    @apply text-4xl font-bold;
-  }
-
-  h2 {
-    @apply text-2xl font-bold;
-  }
-
-  a {
-    @apply text-blue-600 hover:underline;
-  }
-
-  button {
-    @apply font-inherit;
-  }
-}
-
-@layer components {
-  .btn-primary {
-    @apply px-6 py-3 bg-black text-white rounded-lg font-semibold hover:bg-gray-800 transition;
-  }
-
-  .btn-secondary {
-    @apply px-6 py-3 border-2 border-gray-300 text-gray-900 rounded-lg font-semibold hover:border-gray-400 transition;
-  }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 html {
   scroll-behavior: smooth;
 }
 
-details summary {
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #ffffff;
+  color: #000000;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
   cursor: pointer;
-  user-select: none;
+  border: none;
+  background: none;
+  font-family: inherit;
 }
 
-details summary:hover {
-  @apply text-gray-700;
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
 }
 
-details[open] summary {
-  @apply mb-4;
+/* Smooth transitions */
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
