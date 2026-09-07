@@ -1,8 +1,55 @@
+'use client'
+
+import { useState } from 'react'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Link from 'next/link'
 
 export default function Contact() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: 'General inquiry',
+    message: '',
+  })
+  const [loading, setLoading] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState('')
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setSubmitted(true)
+        setFormData({ name: '', email: '', subject: 'General inquiry', message: '' })
+        setTimeout(() => setSubmitted(false), 5000)
+      } else {
+        setError(data.error || 'Failed to send message')
+      }
+    } catch (err) {
+      setError('Something went wrong. Please try again.')
+      console.error('Contact form error:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <>
       <Nav />
@@ -56,20 +103,41 @@ export default function Contact() {
 
         {/* Contact Form */}
         <section className="max-w-2xl mx-auto px-4 mb-20">
-          <form className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block font-semibold mb-2">Name</label>
-              <input type="text" placeholder="Your name" className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black transition" required />
+              <input 
+                type="text" 
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Your name" 
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black transition" 
+                required 
+              />
             </div>
 
             <div>
               <label className="block font-semibold mb-2">Email</label>
-              <input type="email" placeholder="you@example.com" className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black transition" required />
+              <input 
+                type="email" 
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="you@example.com" 
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black transition" 
+                required 
+              />
             </div>
 
             <div>
               <label className="block font-semibold mb-2">Subject</label>
-              <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black transition">
+              <select 
+                name="subject"
+                value={formData.subject}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black transition"
+              >
                 <option>General inquiry</option>
                 <option>Feature request</option>
                 <option>Bug report</option>
@@ -80,11 +148,26 @@ export default function Contact() {
 
             <div>
               <label className="block font-semibold mb-2">Message</label>
-              <textarea placeholder="Tell us what's on your mind..." rows={6} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black transition" required></textarea>
+              <textarea 
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                placeholder="Tell us what's on your mind..." 
+                rows={6} 
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black transition" 
+                required
+              ></textarea>
             </div>
 
-            <button type="submit" className="w-full py-4 bg-black text-white rounded-lg font-bold hover:bg-gray-800 transition">
-              Send message
+            {error && <p className="text-red-600 font-semibold">{error}</p>}
+            {submitted && <p className="text-green-600 font-semibold">✓ Message sent! We'll get back to you soon.</p>}
+
+            <button 
+              type="submit" 
+              disabled={loading}
+              className="w-full py-4 bg-black text-white rounded-lg font-bold hover:bg-gray-800 transition disabled:opacity-50"
+            >
+              {loading ? 'Sending...' : submitted ? '✓ Sent!' : 'Send message'}
             </button>
           </form>
 
